@@ -1,0 +1,14 @@
+.left-column {
+  margin: 0.5em;
+
+  button {
+    background: linear-gradient(grey, darken(grey, 10%));
+    display: block;
+    padding: 0.5em 1em;
+    width: 100%;
+  }
+
+  button:hover {
+    background: linear-gradient(grey, lighten(grey, 10%));
+  }
+}

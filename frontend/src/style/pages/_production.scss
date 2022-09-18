@@ -1,0 +1,42 @@
+ol {
+  margin-left: 1em;
+
+  li {
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: 1fr 8fr;
+    margin: 1em 1em 2rem 1em;
+    background-color: #ffffff21;
+
+    .flex-li-infos {
+      display: flex;
+    }
+
+    .building-name {
+      margin: 0.5em 0.5em 0 0.5em;
+      color: $yellow;
+      font-size: 1.1em;
+    }
+
+    .buildingDescription {
+      font-size: 0.8em;
+      margin: 0.5em;
+      width: 60%;
+      text-align: justify;
+    }
+    
+    .buildingInfos {
+      .upgrade-info {
+        font-size: 0.9em;
+        margin: 0.5em;
+        color:$yellow;
+      }
+    
+      .upgrade-price {
+        font-size: 0.9em;
+        margin: 0.5em;
+      }
+    }
+  }
+}
+

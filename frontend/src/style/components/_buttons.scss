@@ -1,0 +1,65 @@
+button {
+  padding: 0.7em 1.2em;
+  margin: 0.5em;
+  border: none;
+}
+
+button:hover {
+  cursor: pointer;
+}
+
+.button {
+  display: block;
+  text-decoration: none;
+  text-align: center;
+  padding: 0.7em 1.2em;
+  margin: 0.5em;
+  border: none;
+  background-color: $blue;
+  transition: background-color ease-in-out 200ms, box-shadow ease-in-out 200ms;
+}
+
+.button:hover {
+  background-color: $blue;
+  box-shadow: 0 0 0.5em lighten($blue, 5%);
+}
+
+.button:visited {
+  color: inherit;
+}
+
+.action-upgrade {
+  background: linear-gradient($green, darken($green, 10%));
+  font-weight: 700;
+}
+
+.action-upgrade:hover {
+  background: linear-gradient($green, lighten($green, 10%));
+}
+
+.action-downgrade {
+  background: linear-gradient($red, darken($red, 10%));
+  font-weight: 700;
+}
+
+.action-downgrade:hover {
+  background: linear-gradient($red, lighten($red, 10%));
+}
+
+.neon {
+  color: #2196f3;
+  overflow: hidden;
+  transition: 0.2s ease-in-out background-color, 0.2s ease-in-out color, 0.2s ease-in-out box-shadow;
+}
+
+.neon:hover {
+  background-color: #2196f3!important;
+  color: $yellow;
+  box-shadow: 0 0 10px #2196f3, 0 0 40px #2196f3, 0 0 80px #2196f3;
+}
+
+.neon-span {
+  position: relative;
+  display: inline-block;
+  vertical-align: bottom;
+}

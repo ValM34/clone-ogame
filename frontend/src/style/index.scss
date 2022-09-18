@@ -1,0 +1,36 @@
+@import 'utils/variables';
+@import 'utils/mixins';
+@import 'base/reset';
+@import 'base/fonts';
+// @import 'components/';
+@import 'components/buttons';
+// @import 'layouts/';
+@import 'layouts/item';
+@import 'layouts/leftColumn';
+@import 'layouts/pageRessourcesOuInstallations';
+// @import 'pages/';
+@import 'pages/production';
+
+body {
+  color: white;
+  background-image: url('../images/background-space2.jpg');
+}
+
+.App {
+  display: flex;
+  justify-content: center;;
+}
+
+.container-game {
+  display: grid;
+  grid-template-columns: 2fr 8fr;
+  // background: rgba(0, 0, 0, 0.9);
+  margin: 1em;
+  padding: 1em;
+  max-width: 80em;
+}
+
+* {
+  border-radius: 0.2em;
+}
+
