@@ -1,6 +1,49 @@
 const { sequelize } = require('../models');
 const models = require('../models');
 
+exports.displayBuildings = async (req, res, next) => {
+  const idUser = req.auth.id_user;
+  const planet = await models.Planet.findOne({
+    attributes: ['id', 'number', 'metal', 'crystal', 'deuterium', 'selected'],
+    where: { id_user: idUser, selected: 1 }
+  })
+    .then(async (planet) => {
+      const liaison_planet_building = await models.Liaison_planets_building.findAll({
+        attributes: ["id", "id_planet", "id_building", "level"],
+        where: { id_planet: planet.id }
+      })
+        .then(async (liaison_planet_building) => {
+          const Building = await models.Building.findAll({
+            attributes: ['id', 'name', 'metal_price', 'crystal_price', 'deuterium_price', 'price_multiplier', 'description', 'role', 'page', 'img_src'],
+          })
+            .then(async (building) => {
+              let newArr = [];
+              for (let i = 0; i < building.length; i++) {
+                if (building[i].page === req.body.url) {
+                  newArr.push(building[i]);
+                } else {
+                  newArr.push(false)
+                }
+              }
+              building.forEach(building => building.img_src = "http://localhost:3001/" + building.img_src)
+              let newArr2 = [];
+              for (let i = 0; i < newArr.length; i++) {
+                for (let o = 0; o < newArr.length; o++) {
+                  if (newArr[i].id === liaison_planet_building[o].id_building) {
+                    newArr2.push([newArr[i], [liaison_planet_building[o]]]);
+                  }
+                }
+              }
+              
+              return res.status(200).json({ planet: planet, liaison_planet_building: liaison_planet_building, building: newArr2 })
+            })
+            .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
+        })
+        .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
+    })
+    .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
+}
+
 exports.upgrade = async (req, res, next) => {
   const idUser = req.auth.id_user;
   const planet = await models.Planet.findOne({
@@ -18,7 +61,6 @@ exports.upgrade = async (req, res, next) => {
           })
             .then(async (building) => {
               let idBuilding = parseInt(req.body.idBuilding);
-              console.log(idBuilding)
               let array = [];
               for (let i = 0; i < building.length; i++) {
                 if (building[i].id === idBuilding) {
@@ -37,9 +79,9 @@ exports.upgrade = async (req, res, next) => {
                   }
                 }
               }
-              let metalPrice = parseInt(joinedData[0].building.metal_price * Math.pow((joinedData[0].building.price_multiplier / 100), (joinedData[0].liaison_planet_building.level - 1)))
-              let crystalPrice = parseInt(joinedData[0].building.crystal_price * Math.pow((joinedData[0].building.price_multiplier / 100), (joinedData[0].liaison_planet_building.level - 1)))
-              let deuteriumPrice = parseInt(joinedData[0].building.deuterium_price * Math.pow((joinedData[0].building.price_multiplier / 100), (joinedData[0].liaison_planet_building.level - 1)))
+              let metalPrice = parseInt(joinedData[0].building.metal_price * Math.pow((joinedData[0].building.price_multiplier / 100), (joinedData[0].liaison_planet_building.level)))
+              let crystalPrice = parseInt(joinedData[0].building.crystal_price * Math.pow((joinedData[0].building.price_multiplier / 100), (joinedData[0].liaison_planet_building.level)))
+              let deuteriumPrice = parseInt(joinedData[0].building.deuterium_price * Math.pow((joinedData[0].building.price_multiplier / 100), (joinedData[0].liaison_planet_building.level)))
 
               // Calcul du reste après la potentielle upgrade
               let newMetal = planet.metal - metalPrice;
@@ -81,7 +123,6 @@ exports.downgrade = async (req, res, next) => {
     where: { id_user: idUser, selected: 1 }
   })
     .then(async (planet) => {
-      console.log('salr')
       const testeee = await models.Liaison_planets_building.update(
         {level: sequelize.literal('level - 1')},
         {where: { id_planet: planet.id, id_building: req.body.idBuilding }}

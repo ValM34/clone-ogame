@@ -17,6 +17,7 @@ exports.getPlanet = async (req, res, next) => {
     })
 }
 
+// Récupère les données utiles à afficher sur chaque page du site (métal,cristal,deutérium, etc...)
 exports.getData = async (req, res, next) => {
   const idUser = req.auth.id_user;
 
@@ -71,51 +72,6 @@ exports.getData = async (req, res, next) => {
                   return res.status(200).json({ totalMetal, totalCrystal, totalDeuterium })
                 })
                 .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
-            })
-            .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
-        })
-        .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
-    })
-    .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
-}
-
-exports.displayBuildings = async (req, res, next) => {
-  const idUser = req.auth.id_user;
-  const planet = await models.Planet.findOne({
-    attributes: ['id', 'number', 'metal', 'crystal', 'deuterium', 'selected'],
-    where: { id_user: idUser, selected: 1 }
-  })
-    .then(async (planet) => {
-      const liaison_planet_building = await models.Liaison_planets_building.findAll({
-        attributes: ["id", "id_planet", "id_building", "level"],
-        where: { id_planet: planet.id }
-      })
-        .then(async (liaison_planet_building) => {
-          const Building = await models.Building.findAll({
-            attributes: ['id', 'name', 'metal_price', 'crystal_price', 'deuterium_price', 'price_multiplier', 'description', 'role', 'page', 'img_src'],
-          })
-            .then(async (building) => {
-              console.log(req.body)
-              let newArr = [];
-              for (let i = 0; i < building.length; i++) {
-                if (building[i].page === req.body.url) {
-                  newArr.push(building[i]);
-                } else {
-                  newArr.push(false)
-                }
-              }
-              building.forEach(building => building.img_src = "http://localhost:3001/" + building.img_src)
-              let newArr2 = [];
-              console.log(building.length)
-              for (let i = 0; i < newArr.length; i++) {
-                for (let o = 0; o < newArr.length; o++) {
-                  if (newArr[i].id === liaison_planet_building[o].id_building) {
-                    newArr2.push([newArr[i], [liaison_planet_building[o]]]);
-                  }
-                }
-              }
-              
-              return res.status(200).json({ planet: planet, liaison_planet_building: liaison_planet_building, building: newArr2 })
             })
             .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
         })

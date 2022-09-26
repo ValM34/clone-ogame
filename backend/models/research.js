@@ -3,20 +3,21 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class MetalMine extends Model {
-    
+  class Research extends Model {
   };
-  MetalMine.init({
+  Research.init({
+    name: DataTypes.STRING,
     metal_price: DataTypes.INTEGER,
     crystal_price: DataTypes.INTEGER,
     deuterium_price: DataTypes.INTEGER,
-    base_production: DataTypes.INTEGER,
-    name: DataTypes.STRING,
-    description: DataTypes.STRING
+    multiplier: DataTypes.INTEGER,
+    price_multiplier: DataTypes.INTEGER,
+    description: DataTypes.STRING,
+    img_src: DataTypes.STRING,
   }, {
     sequelize,
-    modelName: 'MetalMine',
+    modelName: 'Research',
     underscored: true
   });
-  return MetalMine;
+  return Research;
 };

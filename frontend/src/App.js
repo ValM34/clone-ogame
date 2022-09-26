@@ -1,5 +1,8 @@
 import Login from './pages/Login';
 import Connected from './pages/Connected';
+import Researchs from './pages/Researchs';
+import LeftColumn from './layouts/LeftColumn';
+import Header from './layouts/Header';
 import { useEffect, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
@@ -33,10 +36,13 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
+      {isLoggedIn ? <Header /> : ""}
+      {isLoggedIn ? <LeftColumn /> : ""}
         <Routes>
           <Route path="/" element={isLoggedIn ? <Connected /> : <Login />} />
           <Route path="/ressources" element={isLoggedIn ? <Connected /> : <Login />} />
           <Route path="/installations" element={isLoggedIn ? <Connected /> : <Login />} />
+          <Route path="/recherches" element={isLoggedIn ? <Researchs /> : <Login />} />
         </Routes>
       </BrowserRouter>
     </div>

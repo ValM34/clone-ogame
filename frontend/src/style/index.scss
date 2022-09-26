@@ -21,16 +21,6 @@ body {
   justify-content: center;;
 }
 
-.container-game {
-  display: grid;
-  grid-template-columns: 2fr 8fr;
-  // background: rgba(0, 0, 0, 0.9);
-  margin: 1em;
-  padding: 1em;
-  max-width: 80em;
-}
-
 * {
   border-radius: 0.2em;
 }
-
