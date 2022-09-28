@@ -1,6 +1,6 @@
 Délai de construction des bâtiments/recherches/unités défensives/unités offensives
 
-Bâtiments :
+Recherche : (taux : x2)
 
 Backend :
 Un délai mentionné en nombre brut de millisecondes

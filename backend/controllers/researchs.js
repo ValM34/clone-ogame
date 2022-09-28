@@ -9,7 +9,7 @@ exports.displayResearchs = async (req, res, next) => {
     .then(async (liaison_user_research) => {
 
       const research = await models.Research.findAll({
-        attributes: ['id', 'name', 'metal_price', 'crystal_price', 'deuterium_price', 'price_multiplier', 'description', 'img_src'],
+        attributes: ['id', 'name', 'metal_price', 'crystal_price', 'deuterium_price', 'price_multiplier', 'description', 'img_src', 'base_duration', 'duration_multiplier'],
       })
         .then(async (research) => {
 
@@ -51,7 +51,7 @@ exports.downgrade = async (req, res, next) => {
           .then(async (liaison) => {
             const research = await models.Research.findOne({ where: { id: liaison.id_research } })
               .then((research) => {
-                return res.status(200).json({ newLevel: liaison.level, metalPrice: research.metal_price, crystalPrice: research.crystal_price, deuteriumPrice: research.deuterium_price, priceMultiplier: research.price_multiplier })
+                return res.status(200).json({ newLevel: liaison.level, metalPrice: research.metal_price, crystalPrice: research.crystal_price, deuteriumPrice: research.deuterium_price, priceMultiplier: research.price_multiplier, base_duration: research.base_duration })
               })
               .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
           })
@@ -59,7 +59,7 @@ exports.downgrade = async (req, res, next) => {
       } else {
         const research = await models.Research.findOne({ where: { id: liaison.id_research } })
           .then((research) => {
-            return res.status(200).json({ newLevel: liaison.level, metalPrice: research.metal_price, crystalPrice: research.crystal_price, deuteriumPrice: research.deuterium_price, priceMultiplier: research.price_multiplier })
+            return res.status(200).json({ newLevel: liaison.level, metalPrice: research.metal_price, crystalPrice: research.crystal_price, deuteriumPrice: research.deuterium_price, priceMultiplier: research.price_multiplier, base_duration: research.base_duration })
           })
           .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
       }
@@ -98,7 +98,7 @@ exports.upgrade = async (req, res, next) => {
                     level: liaison.level + 1
                   })
                     .then((liaison) => {
-                      return res.status(200).json({ newLevel: liaison.level, metalPrice: research.metal_price, crystalPrice: research.crystal_price, deuteriumPrice: research.deuterium_price, priceMultiplier: research.price_multiplier })
+                      return res.status(200).json({ newLevel: liaison.level, metalPrice: research.metal_price, crystalPrice: research.crystal_price, deuteriumPrice: research.deuterium_price, priceMultiplier: research.price_multiplier, base_duration: research.base_duration })
                     })
                     .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
                 })

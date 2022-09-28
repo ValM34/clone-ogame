@@ -12,6 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     deuterium_price: DataTypes.INTEGER,
     multiplier: DataTypes.INTEGER,
     price_multiplier: DataTypes.INTEGER,
+    base_duration: DataTypes.INTEGER,
+    duration_multiplier: DataTypes.INTEGER,
     description: DataTypes.STRING,
     img_src: DataTypes.STRING,
   }, {

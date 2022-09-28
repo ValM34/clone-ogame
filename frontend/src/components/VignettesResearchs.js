@@ -13,14 +13,15 @@ function VignettesResearchs({ data }) {
   const [metalPrice, setMetalPrice] = useState(null);
   const [crystalPrice, setCrystalPrice] = useState(null);
   const [deuteriumPrice, setDeuteriumPrice] = useState(null);
+  const [duration, setDuration] = useState(null);
 
-  if(metalPrice === null) {
+  if (metalPrice === null) {
     setMetalPrice(parseInt(data[0].metal_price * Math.pow((data[0].price_multiplier / 100), (data[1][0].level))))
   }
-  if(crystalPrice === null) {
+  if (crystalPrice === null) {
     setCrystalPrice(parseInt(data[0].crystal_price * Math.pow((data[0].price_multiplier / 100), (data[1][0].level))))
   }
-  if(deuteriumPrice === null) {
+  if (deuteriumPrice === null) {
     setDeuteriumPrice(parseInt(data[0].deuterium_price * Math.pow((data[0].price_multiplier / 100), (data[1][0].level))))
   }
 
@@ -41,6 +42,7 @@ function VignettesResearchs({ data }) {
         setMetalPrice(parseInt(response.metalPrice * Math.pow((response.priceMultiplier / 100), (response.newLevel))));
         setCrystalPrice(parseInt(response.crystalPrice * Math.pow((response.priceMultiplier / 100), (response.newLevel))));
         setDeuteriumPrice(parseInt(response.deuteriumPrice * Math.pow((response.priceMultiplier / 100), (response.newLevel))));
+        calculateDuration(response.base_duration, response.newLevel);
       })
   }
   function downgrade() {
@@ -60,6 +62,7 @@ function VignettesResearchs({ data }) {
         setMetalPrice(parseInt(response.metalPrice * Math.pow((response.priceMultiplier / 100), (response.newLevel))));
         setCrystalPrice(parseInt(response.crystalPrice * Math.pow((response.priceMultiplier / 100), (response.newLevel))));
         setDeuteriumPrice(parseInt(response.deuteriumPrice * Math.pow((response.priceMultiplier / 100), (response.newLevel))));
+        calculateDuration(response.base_duration, response.newLevel);
       })
   }
   useEffect(() => {
@@ -70,16 +73,46 @@ function VignettesResearchs({ data }) {
       setIdBuildingDown({ idResearch: refDowngrade.current.attributes[0].value })
     }
   }, [idBuildingUp, idBuildingDown])
-    if(mineLevel === null) {
-      setMineLevel(data[1][0].level);
+  if (mineLevel === null) {
+    setMineLevel(data[1][0].level);
+  }
+
+  // Calcule la durée pour obtenir la recherche
+  function calculateDuration(base_duration, level) {
+    let vraieDuree = 0;
+    let vraieDuree2 = 0;
+    for (let i = 0; i <= level; i++) {
+      if (i === 0) {
+        vraieDuree = base_duration;
+        let minutes = parseInt(vraieDuree / 60).toString()
+        let secondes = (vraieDuree % 60).toString()
+        setDuration(minutes + "min " + secondes + "s");
+      } else {
+        vraieDuree2 = vraieDuree * (data[0].duration_multiplier / 100);
+        vraieDuree = vraieDuree2;
+        let minutes = parseInt(vraieDuree / 60).toString()
+        let secondes = (vraieDuree % 60).toString()
+        setDuration(minutes + "min " + secondes + "s");
+      }
     }
-  
+  }
+
+
+
+
+  if (duration === null) {
+    calculateDuration(data[0].base_duration, data[1][0].level)
+  }
+
+
+
+
 
   return (
     <li>
       <div className="data-img" style={{ backgroundImage: 'url(' + data[0].img_src + ')' }}></div>
       <div>
-        <p className="building-name">Technologie {data[0].name} niveau {mineLevel}</p>
+        <p className="building-name">Technologie {data[0].name} niveau {mineLevel} (temps de construction : {duration})</p>
         <div className="flex-li-infos">
           <p className="buildingDescription">
             {data[0].description}
