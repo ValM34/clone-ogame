@@ -36,14 +36,16 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-      {isLoggedIn ? <Header /> : ""}
-      {isLoggedIn ? <LeftColumn /> : ""}
-        <Routes>
-          <Route path="/" element={isLoggedIn ? <Connected /> : <Login />} />
-          <Route path="/ressources" element={isLoggedIn ? <Connected /> : <Login />} />
-          <Route path="/installations" element={isLoggedIn ? <Connected /> : <Login />} />
-          <Route path="/recherches" element={isLoggedIn ? <Researchs /> : <Login />} />
-        </Routes>
+        {isLoggedIn ? <Header /> : ""}
+        <div className="main">
+          {isLoggedIn ? <LeftColumn /> : ""}
+          <Routes>
+            <Route path="/" element={isLoggedIn ? <Connected /> : <Login />} />
+            <Route path="/ressources" element={isLoggedIn ? <Connected /> : <Login />} />
+            <Route path="/installations" element={isLoggedIn ? <Connected /> : <Login />} />
+            <Route path="/recherches" element={isLoggedIn ? <Researchs /> : <Login />} />
+          </Routes>
+        </div>
       </BrowserRouter>
     </div>
   );

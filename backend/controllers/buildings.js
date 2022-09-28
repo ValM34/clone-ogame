@@ -34,7 +34,7 @@ exports.displayBuildings = async (req, res, next) => {
                   }
                 }
               }
-              
+
               return res.status(200).json({ planet: planet, liaison_planet_building: liaison_planet_building, building: newArr2 })
             })
             .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
@@ -67,7 +67,7 @@ exports.upgrade = async (req, res, next) => {
                   array.push(building[i])
                 }
               }
-              
+
               joinedData = [];
               for (let i = 0; i < liaison_planet_building.length; i++) {
                 for (let o = 0; o < building.length; o++) {
@@ -100,10 +100,10 @@ exports.upgrade = async (req, res, next) => {
                 .then(async () => {
                   const upgradeBuilding = await models.Liaison_planets_building.update(
                     { level: newLevel },
-                    { where: { id_building: idBuilding }}
+                    { where: { id_building: idBuilding } }
                   )
                     .then(async () => {
-                      return res.status(200).json({ succes: 'UPGRADED' })
+                      return res.status(200).json({ newLevel: newLevel, metalPrice: joinedData[0].building.metal_price, crystalPrice: joinedData[0].building.crystal_price, deuteriumPrice: joinedData[0].building.deuterium_price, priceMultiplier: joinedData[0].building.price_multiplier })
                     })
                     .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
                 })
@@ -118,17 +118,35 @@ exports.upgrade = async (req, res, next) => {
 
 exports.downgrade = async (req, res, next) => {
   const idUser = req.auth.id_user;
-  const planet = await models.Planet.findOne({
-    attributes: ['id', 'selected'],
-    where: { id_user: idUser, selected: 1 }
-  })
+  const planet = await models.Planet.findOne({ where: { id_user: idUser, selected: 1 } })
     .then(async (planet) => {
-      const testeee = await models.Liaison_planets_building.update(
-        {level: sequelize.literal('level - 1')},
-        {where: { id_planet: planet.id, id_building: req.body.idBuilding }}
-        )
-          .then(async () => { return res.status(200).json({ succes: 'SUCCES' }) })
-          .catch(() => { return res.status(400).json({ error: 'ERROR' }) })
+      const liaison = await models.Liaison_planets_building.findOne({
+        where: { id_planet: planet.id, id_building: req.body.idBuilding }
+      })
+        .then(async (liaison) => {
+          newLevel = liaison.level - 1;
+          if (newLevel >= 0) {
+            liaison.update(
+              { level: liaison.level - 1 },
+              { where: { id_user: idUser, id_building: req.body.idBuilding } }
+            )
+              .then(async (liaison) => {
+                const building = await models.Building.findOne({ where: { id: liaison.id_building } })
+                  .then((building) => {
+                    return res.status(200).json({ newLevel: liaison.level, metalPrice: building.metal_price, crystalPrice: building.crystal_price, deuteriumPrice: building.deuterium_price, priceMultiplier: building.price_multiplier })
+                  })
+                  .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
+              })
+              .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
+          } else {
+            const building = await models.Building.findOne({ where: { id: liaison.id_building } })
+              .then((building) => {
+                return res.status(200).json({ newLevel: liaison.level, metalPrice: building.metal_price, crystalPrice: building.crystal_price, deuteriumPrice: building.deuterium_price, priceMultiplier: building.price_multiplier })
+              })
+              .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
+          }
+        })
+        .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
     })
-    .catch(() => { return res.status(400).json({ error: 'ERROR' }) })
+    .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
 }

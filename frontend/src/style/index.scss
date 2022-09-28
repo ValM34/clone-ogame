@@ -16,11 +16,18 @@ body {
   background-image: url('../images/background-space2.jpg');
 }
 
-.App {
-  display: flex;
-  justify-content: center;;
-}
-
 * {
   border-radius: 0.2em;
+}
+
+.main {
+  display: flex;
+}
+
+.main > aside {
+  width: 20%;
+}
+
+.main > ol {
+  width: 80%;
 }

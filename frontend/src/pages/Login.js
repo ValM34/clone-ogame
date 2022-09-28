@@ -29,7 +29,6 @@ function Login() {
       })
         .then(response => response.json())
         .then((infosUser) => {
-          console.log(infosUser);
 
           if (infosUser.userId) {
             let infosSignin = {
@@ -39,7 +38,6 @@ function Login() {
             let userLocalStorage = [];
             userLocalStorage.push(infosSignin);
             localStorage.setItem("userData", JSON.stringify(userLocalStorage));
-            console.log(infosUser)
             window.location.reload(false);
           } else {
             setErrorConnexion(true);

@@ -7,14 +7,12 @@ function Vignettes({ item }) {
 
   const refUpgrade = useRef(null);
   const refDowngrade = useRef(null);
-  const [state, setState] = useState(null);
-  const [state2, setState2] = useState(null);
-
-  console.log(item[0].price_multiplier)
-  console.log(item[0].id)
-  let metalPrice = parseInt(item[0].metal_price * Math.pow((item[0].price_multiplier / 100), (item[1][0].level)))
-  let crystalPrice = parseInt(item[0].crystal_price * Math.pow((item[0].price_multiplier / 100), (item[1][0].level)))
-  let deuteriumPrice = parseInt(item[0].deuterium_price * Math.pow((item[0].price_multiplier / 100), (item[1][0].level)))
+  const [idBuildingUp, setIdBuildingUp] = useState(null);
+  const [idBuildingDown, setIdBuildingDown] = useState(null);
+  const [mineLevel, setMineLevel] = useState(null);
+  const [metalPrice, setMetalPrice] = useState(null);
+  const [crystalPrice, setCrystalPrice] = useState(null);
+  const [deuteriumPrice, setDeuteriumPrice] = useState(null);
 
   function upgrade() {
     let userData = JSON.parse(localStorage.getItem("userData"));
@@ -25,8 +23,15 @@ function Vignettes({ item }) {
         'Content-Type': 'application/json',
         'Authorization': userData[0].token
       },
-      body: JSON.stringify(state)
+      body: JSON.stringify(idBuildingUp)
     })
+      .then((response) => response.json())
+      .then((response) => {
+        setMineLevel(response.newLevel);
+        setMetalPrice(parseInt(response.metalPrice * Math.pow((response.priceMultiplier / 100), (response.newLevel))));
+        setCrystalPrice(parseInt(response.crystalPrice * Math.pow((response.priceMultiplier / 100), (response.newLevel))));
+        setDeuteriumPrice(parseInt(response.deuteriumPrice * Math.pow((response.priceMultiplier / 100), (response.newLevel))));
+      })
   }
   function downgrade() {
     let userData = JSON.parse(localStorage.getItem("userData"));
@@ -37,30 +42,50 @@ function Vignettes({ item }) {
         'Content-Type': 'application/json',
         'Authorization': userData[0].token
       },
-      body: JSON.stringify(state2)
+      body: JSON.stringify(idBuildingDown)
     })
+      .then((response) => response.json())
+      .then((response) => {
+        setMineLevel(response.newLevel);
+        setMetalPrice(parseInt(response.metalPrice * Math.pow((response.priceMultiplier / 100), (response.newLevel))));
+        setCrystalPrice(parseInt(response.crystalPrice * Math.pow((response.priceMultiplier / 100), (response.newLevel))));
+        setDeuteriumPrice(parseInt(response.deuteriumPrice * Math.pow((response.priceMultiplier / 100), (response.newLevel))));
+      })
   }
   useEffect(() => {
-    if (state === null) {
-      setState({ idBuilding: refUpgrade.current.attributes[0].value })
+    if (idBuildingUp === null) {
+      setIdBuildingUp({ idBuilding: refUpgrade.current.attributes[0].value })
     }
-    if (state2 === null) {
-      setState2({ idBuilding: refDowngrade.current.attributes[0].value })
+    if (idBuildingDown === null) {
+      setIdBuildingDown({ idBuilding: refDowngrade.current.attributes[0].value })
     }
 
-  }, [state, state2])
-  console.log(item)
+
+  }, [idBuildingUp, idBuildingDown])
+
+  if (mineLevel === null) {
+    setMineLevel(item[1][0].level)
+  }
+  if (metalPrice === null) {
+    setMetalPrice(parseInt(item[0].metal_price * Math.pow((item[0].price_multiplier / 100), (item[1][0].level))))
+  }
+  if (crystalPrice === null) {
+    setCrystalPrice(parseInt(item[0].crystal_price * Math.pow((item[0].price_multiplier / 100), (item[1][0].level))))
+  }
+  if (deuteriumPrice === null) {
+    setDeuteriumPrice(parseInt(item[0].deuterium_price * Math.pow((item[0].price_multiplier / 100), (item[1][0].level))))
+  }
   return (
     <li>
       <div className="item-img" style={{ backgroundImage: 'url(' + item[0].img_src + ')' }}></div>
       <div>
-        <p className="building-name">{item[0].name} niveau {item[1][0].level}</p>
+        <p className="building-name">{item[0].name} niveau {mineLevel}</p>
         <div className="flex-li-infos">
           <p className="buildingDescription">
             {item[0].description}
           </p>
           <div className="buildingInfos">
-            <div className="upgrade-info">Nécessaire pour le niveau {item[1][0].level + 1} :</div>
+            <div className="upgrade-info">Nécessaire pour le niveau {mineLevel + 1} :</div>
             <span className="upgrade-price">{metalPrice} métal, </span>
             <span className="upgrade-price">{crystalPrice} cristal, </span>
             <span className="upgrade-price">{deuteriumPrice} deutérium</span>

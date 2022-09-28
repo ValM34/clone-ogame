@@ -9,7 +9,6 @@ for (i = 0; i < maxLevel; i++) {
   }
 };
 
-console.log(metalMine)
 
 
 // Prix de la mine de métal
@@ -40,7 +39,6 @@ for (i = 0; i < maxLevel; i++) {
     }
   }
 }
-console.log(metalMinePrice)
 
 var data = [];
 // ...
@@ -55,4 +53,3 @@ for ( var index=0; index<data.length; index++ ) {
 }
 data = tempData;
 
-console.log(data)

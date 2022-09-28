@@ -41,15 +41,27 @@ exports.downgrade = async (req, res, next) => {
   const liaison = await models.Liaison_users_research.findOne({
     where: { id_user: idUser, id_research: req.body.idResearch }
   })
-    .then((liaison) => {
+    .then(async (liaison) => {
       newLevel = liaison.level - 1;
       if (newLevel >= 0) {
         liaison.update(
           { level: liaison.level - 1 },
           { where: { id_user: idUser, id_research: req.body.idResearch } }
         )
+          .then(async (liaison) => {
+            const research = await models.Research.findOne({ where: { id: liaison.id_research } })
+              .then((research) => {
+                return res.status(200).json({ newLevel: liaison.level, metalPrice: research.metal_price, crystalPrice: research.crystal_price, deuteriumPrice: research.deuterium_price, priceMultiplier: research.price_multiplier })
+              })
+              .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
+          })
+          .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
       } else {
-        return res.status(200).json({ fail: 'Ce bâtiment est déjà au niveau minimal !' })
+        const research = await models.Research.findOne({ where: { id: liaison.id_research } })
+          .then((research) => {
+            return res.status(200).json({ newLevel: liaison.level, metalPrice: research.metal_price, crystalPrice: research.crystal_price, deuteriumPrice: research.deuterium_price, priceMultiplier: research.price_multiplier })
+          })
+          .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
       }
     })
     .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
@@ -75,7 +87,7 @@ exports.upgrade = async (req, res, next) => {
               let newMetal = planet.metal - metalPrice;
               let newCrystal = planet.crystal - crystalPrice;
               let newDeuterium = planet.deuterium - deuteriumPrice;
-              if(newMetal < 0 || newCrystal < 0 || newDeuterium < 0) {
+              if (newMetal < 0 || newCrystal < 0 || newDeuterium < 0) {
                 return;
               }
               planet.update({
@@ -86,7 +98,7 @@ exports.upgrade = async (req, res, next) => {
                     level: liaison.level + 1
                   })
                     .then((liaison) => {
-                      return res.status(200).json({ succes: 'SUCCES' })
+                      return res.status(200).json({ newLevel: liaison.level, metalPrice: research.metal_price, crystalPrice: research.crystal_price, deuteriumPrice: research.deuterium_price, priceMultiplier: research.price_multiplier })
                     })
                     .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
                 })
@@ -98,10 +110,3 @@ exports.upgrade = async (req, res, next) => {
     })
     .catch(() => { return res.status(400).json({ error: 'ERROR' }) });
 }
-
-
-// J'ai besoin de : (pour upgrade)
-// users pour l'id user
-// planets pour faire le calcul des ressources au niveau de la planète sélectionnée
-// liaison_users_researchs pour update le level et récupérer le prix de la recherche
-// 
